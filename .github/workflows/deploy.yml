@@ -1,4 +1,4 @@
-name: Build and deploy to GitHub Pages
+name: Deploy Angular app to GitHub Pages
 
 on:
   push:
@@ -8,11 +8,12 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -20,15 +21,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        # set base-href to your repo path
-        run: npm run build -- --configuration production --base-href "/main/"
+      - name: Build Angular app
+        run: npm run build -- --configuration production --base-href "/spritofone-villa/"
 
-      - name: Copy index -> 404 for SPA fallback
-        run: |
-          cp -f dist/spritofone-villa/index.html dist/spritofone-villa/404.html
+      - name: Copy index to 404 for SPA fallback
+        run: cp dist/spritofone-villa/index.html dist/spritofone-villa/404.html
 
-      - name: Deploy to gh-pages
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
